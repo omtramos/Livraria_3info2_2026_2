@@ -1,6 +1,7 @@
 """
 Django admin customization.
 """
+
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, register
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -41,7 +42,7 @@ class LivroAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'editora', 'categoria')
     search_fields = ('titulo', 'editora__nome', 'categoria__descricao')
     list_filter = ('editora', 'categoria')
-    ordering = ('titulo', 'editora', 'categoria')
+    ordering = ('titulo',)
     list_per_page = 25
 
 
@@ -50,10 +51,42 @@ class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
 
     ordering = ['id']
-    list_display = ['email', 'name']
+
+    list_display = (
+        'email',
+        'name',
+        'is_staff',
+        'is_active',
+    )
+
+    search_fields = (
+        'email',
+        'name',
+    )
+
+    readonly_fields = (
+        'last_login',
+    )
+
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name',)}),
+        (
+            None,
+            {
+                'fields': (
+                    'email',
+                    'password',
+                ),
+            },
+        ),
+        (
+            _('Personal Info'),
+            {
+                'fields': (
+                    'name',
+                    'foto',
+                ),
+            },
+        ),
         (
             _('Permissions'),
             {
@@ -61,14 +94,21 @@ class UserAdmin(BaseUserAdmin):
                     'is_active',
                     'is_staff',
                     'is_superuser',
-                )
+                    'groups',
+                    'user_permissions',
+                ),
             },
         ),
-        (_('Important dates'), {'fields': ('last_login',)}),
-        (_('Groups'), {'fields': ('groups',)}),
-        (_('User Permissions'), {'fields': ('user_permissions',)}),
+        (
+            _('Important dates'),
+            {
+                'fields': (
+                    'last_login',
+                ),
+            },
+        ),
     )
-    readonly_fields = ['last_login']
+
     add_fieldsets = (
         (
             None,
@@ -76,9 +116,9 @@ class UserAdmin(BaseUserAdmin):
                 'classes': ('wide',),
                 'fields': (
                     'email',
+                    'name',
                     'password1',
                     'password2',
-                    'name',
                     'is_active',
                     'is_staff',
                     'is_superuser',
